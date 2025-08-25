@@ -66,10 +66,10 @@ func insertRow(ctx context.Context,u User) error {
 // this example describes usage with sqlx, *cough* gorm and other ORMs
 // that can scan the columns directly into a struct
 type intermediateUser struct {
-    ID    int    `json:"id"` `db:"id"`
-    Name  string `json:"name"` `db:"name"`
-    Email string `json:"email"` `db:"email"`
-    Tags  sqljson.Field[[]string] `json:"tags"` `db:"tags"`
+	ID    int                     `json:"id" db:"id"`
+	Name  string                  `json:"name" db:"name"`
+	Email string                  `json:"email" db:"email"`
+	Tags  sqljson.Field[[]string] `json:"tags" db:"tags"`
 }
 
 func sqlxSelect(ctx context.Context) error {
