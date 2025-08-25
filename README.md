@@ -62,4 +62,33 @@ func insertRow(ctx context.Context,u User) error {
    
    return err
 }
+
+// this example describes usage with sqlx, *cough* gorm and other ORMs
+// that can scan the columns directly into a struct
+type intermediateUser struct {
+    ID    int    `json:"id"` `db:"id"`
+    Name  string `json:"name"` `db:"name"`
+    Email string `json:"email"` `db:"email"`
+    Tags  sqljson.Field[[]string] `json:"tags"` `db:"tags"`
+}
+
+func sqlxSelect(ctx context.Context) error {
+   q := "SELECT id,name,email,tags FROM users WHERE id = 1"
+   
+   // here, sqlx will scan tags directly into intermediateUser.Tags...
+   var user intermediateUser
+   if err := sqlx.GetContext(ctx,db,q,&user); err != nil {
+      return err
+   }
+   
+   // which becomes an unmarshalled []string
+   ret := User{
+       ID: user.ID,
+       Name: user.Name,
+       Email: user.Email,
+       Tags: user.Tags.Get(),
+   }
+   
+   return nil
+}
 ```
