@@ -13,8 +13,11 @@ go get github.com/utrack/sqljson@latest
 
 ## Usage
 ```go
-import "github.com/utrack/sqljson"
-import "database/sql"
+import (
+    "github.com/utrack/sqljson"
+    "database/sql"
+    "context"
+)
 
 type User struct {
     ID    int    `json:"id"` // DB column name: id, type: int
@@ -49,5 +52,14 @@ func selectRows() error {
             return err
         }
     }
+}
+
+func insertRow(ctx context.Context,u User) error {
+   q := "INSERT INTO users (id,name,email,tags) VALUES ($1,$2,$3,$4)"
+   
+   // works for marshalling, too!
+   _,err := db.ExecContext(ctx,q, u.ID, u.Name, u.Email, sqljson.As(u.Tags))
+   
+   return err
 }
 ```
